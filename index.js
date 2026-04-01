@@ -1,0 +1,5 @@
+const { add, sub, mul, div } = require('./Calcul.js')
+console.log(add(2, 3))
+console.log(sub(5, 2))
+console.log(mul(3, 4))
+console.log(div(10, 2))
