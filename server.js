@@ -44,6 +44,10 @@ const result = async () => {
 
 result()
 
+
+// fspromise.writeFile(path.join(__dirname, 'File', 'new.txt'), 'This is new data 2')
+// console.log("write successfully")
+
 /* fs.writeFile(path.join(__dirname, 'File', 'new.txt'), 'This is new data', (err) => {
     if (err) throw err;
     else console.log("write successfully")
