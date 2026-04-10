@@ -6,6 +6,7 @@
 // import path from 'path'
 // import { add, sub, mul, div } from './Calcul.js'
 
+const os = require('os')
 const { existsSync } = require('fs')
 const path = require('path')
 const fspromise = require('fs').promises
@@ -31,7 +32,7 @@ const result = async () => {
         console.log(data)
         await fspromise.writeFile(path.join(__dirname, 'File', 'new.txt'), 'This is new data')
         console.log("write successfully")
-        await fspromise.rename(path.join(__dirname, 'File', 'rename.txt'), path.join(__dirname, 'File', 'renamed.txt'))
+        await fspromise.rename(path.join(__dirname, 'File', 'renamed.txt'), path.join(__dirname, 'File', 'rename.txt'))
         console.log("renamed successfully")
         await fspromise.appendFile(path.join(__dirname, 'File', 'new.txt'), '\nNew data to append')
         console.log("append successfully")

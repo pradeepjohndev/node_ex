@@ -8,7 +8,9 @@ const logEvent = async (message) => {
     const logItem = `${dateTime}\t${uuidv4()}\t${message}\n`
     console.log(logItem)
     try {
-        await fspromise.appendFile(path.join(__dirname, 'File', 'Log.txt'), logItem)
+        await fspromise.appendFile(path.join(__dirname, 'File', 'Log.txt'), logItem, () => {
+            console.log("Log added successfully")
+        })
     }
     catch (err) {
         console.error(err)
