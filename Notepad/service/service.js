@@ -1,4 +1,5 @@
 const pool = require('../dbconfig/dbpool');
+const bcrypt = require('bcrypt');
 
 exports.getallnote = async () => {
     try {
@@ -50,6 +51,54 @@ exports.deletenote = async (id) => {
     }
     catch (err) {
         console.error('Error deleting note:', err);
+        throw err;
+    }
+};
+
+
+exports.authentication = async (username, password) => {
+    const hashedPassword = await bcrypt.hash(password, 10);
+    try {
+        const result = pool.query('insert into users (username,password) values ($1,$2) returning *', [username, hashedPassword]);
+        return result.rows;
+    }
+    catch (err) {
+        console.error('Error authenticating user:', err);
+        throw err;
+    }
+};
+
+exports.readauthentication = async (username) => {
+    try {
+        const result = await pool.query('select * from users where username = $1', [username]);
+        return result.rows[0];
+    } catch (err) {
+        console.error('Error reading user authentication:', err);
+        throw err;
+    }
+};
+
+exports.auth = async (username, password) => {
+    try {
+        const result = await pool.query('select * from users where username = $1', [username]);
+        const user = result.rows[0];
+        if (user && await bcrypt.compare(password, user.password)) {
+            return user;
+        } else {
+            return null;
+        }
+    } catch (err) {
+        console.error('Error during authentication:', err);
+        throw err;
+    }
+};
+
+exports.dashboard = async () => {
+    try {
+        const result = await pool.query('SELECT * FROM notes');
+        return result.rows;
+    } catch (err) {
+        console.error('Error fetching dashboard data:', err);
         throw err;
     }
 };
