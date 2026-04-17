@@ -10,13 +10,16 @@ const createNote = (req, res) => {
     });
 };
 
-const getnotes = (req, res) => {
-    const notes = noteservice.getAllNotes();
-    res.json(notes);
-    res.status(200).json({
-        message: "Notes retrieved",
-        data: notes
-    });
+
+const getnotes = async (req, res) => {
+    try {
+        const notes = await notesService.getNotes();
+
+        res.status(200).json({ data: notes });
+
+    } catch (err) {
+        res.status(500).json({ message: "Error fetching notes" });
+    }
 };
 
 const updatenote = (req, res) => {

@@ -1,13 +1,21 @@
+const pool = require('../config/dbpool');
+
 let notes = [];
 
-exports.addNote = (note) => {
-    note.id = notes.length + 1;
-    notes.push(note);
-    return note;
+exports.addNote = async (note) => {
+    const result = await pool.query(
+        "INSERT INTO notes (title, content) VALUES ($1, $2) RETURNING *",
+        [note.title, note.content]
+    );
+    return result.rows[0];
+    // note.id = notes.length + 1;
+    // notes.push(note);
+    // return note;
 };
 
-exports.getAllNotes = () => {
-    return notes;
+exports.getAllNotes = async () => {
+    const result = await pool.query("SELECT * FROM notes ORDER BY id");
+    return result.rows;
 };
 
 exports.updatenote = (id, updatedNote) => {

@@ -87,17 +87,24 @@ const readauthentication = async (req, res) => {
     });
 };
 
-const auth = async (req, res) => {
+const authen = async (req, res) => {
     const { username, password } = req.body;
     if (!username || !password) {
         return res.status(400).json({
             message: "Username and password are required"
         });
     }
+
     const result = await noteservice.authentication(username, password);
     if (result) {
+        const token = jwt.sign(
+            { id: result.id, username: result.username },
+            secret,
+            { expiresIn: "1h" }
+        );
         return res.status(200).json({
             message: "User authenticated",
+            token: token,
             data: result
         });
     } else {
@@ -107,37 +114,21 @@ const auth = async (req, res) => {
     }
 };
 
+
 const dashboard = async (req, res) => {
+    const result = await noteservice.dashboard();
     return res.status(200).json({
-        message: "Welcome to the dashboard"
+        message: "Welcome to the dashboard",
+        data: result
     });
 };
 
-const authen = async (req, res) => {
-    try {
-        const { email, password } = req.body;
-        const user = await authService.login(email, password);
+const pagimation = async (req, res) => {
+    const result = await noteservice.pagimation(req);
+    return res.status(200).json({
+        message: "Data of page",
+        data: result
+    });
+}
 
-        if (!user) {
-            return res.status(401).json({
-                message: "Invalid credentials"
-            });
-        }
-
-        const token = jwt.sign(
-            { id: user.id, email: user.email },
-            "mysecretkey",
-            { expiresIn: "1h" }
-        );
-
-        res.json({
-            message: "Login successful",
-            token: token
-        });
-
-    } catch (err) {
-        res.status(500).json({ message: "Login error" });
-    }
-};
-
-module.exports = { getallnote, getonenote, createnote, updatenote, deletenote, patchnote, authentication, readauthentication, authen, dashboard };
+module.exports = { pagimation, getallnote, getonenote, createnote, updatenote, deletenote, patchnote, authentication, readauthentication, authen, dashboard };

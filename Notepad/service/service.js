@@ -59,7 +59,7 @@ exports.deletenote = async (id) => {
 exports.authentication = async (username, password) => {
     const hashedPassword = await bcrypt.hash(password, 10);
     try {
-        const result = pool.query('insert into users (username,password) values ($1,$2) returning *', [username, hashedPassword]);
+        const result = await pool.query('insert into users (username,password) values ($1,$2) returning *', [username, hashedPassword]);
         return result.rows;
     }
     catch (err) {
@@ -78,7 +78,7 @@ exports.readauthentication = async (username) => {
     }
 };
 
-exports.auth = async (username, password) => {
+/* exports.auth = async (username, password) => {
     try {
         const result = await pool.query('select * from users where username = $1', [username]);
         const user = result.rows[0];
@@ -91,7 +91,7 @@ exports.auth = async (username, password) => {
         console.error('Error during authentication:', err);
         throw err;
     }
-};
+}; */
 
 exports.dashboard = async () => {
     try {
@@ -99,6 +99,20 @@ exports.dashboard = async () => {
         return result.rows;
     } catch (err) {
         console.error('Error fetching dashboard data:', err);
+        throw err;
+    }
+};
+
+exports.pagimation = async (req) => {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 5;
+    const offset = (page - 1) * limit;
+
+    try {
+        const result = await pool.query('SELECT * FROM employee ORDER BY id LIMIT $1 OFFSET $2', [limit, offset]);
+        return result.rows;
+    } catch (err) {
+        console.error('Error fetching paginated data:', err);
         throw err;
     }
 };
